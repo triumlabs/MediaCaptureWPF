@@ -19,11 +19,20 @@ namespace MediaCaptureWPF
         uint m_width;
         uint m_height;
 
-        public CapturePreview(MediaCapture capture)
+        public CapturePreview(MediaCapture capture, VideoRotation rotation = VideoRotation.None)
         {
+            capture.SetPreviewRotation(rotation);
             var props = (VideoEncodingProperties)capture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-            m_width = props.Width;
-            m_height = props.Height;
+            if (rotation == VideoRotation.None || rotation == VideoRotation.Clockwise180Degrees)
+            {
+                m_width = props.Width;
+                m_height = props.Height;
+            }
+            else
+            {
+                m_width = props.Height;
+                m_height = props.Width;
+            }
 
             m_preview = new CapturePreviewNative(this, m_width, m_height);
             m_capture = capture;
